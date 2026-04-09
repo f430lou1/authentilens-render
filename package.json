@@ -1,0 +1,22 @@
+{
+  "name": "authentilens-render",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts AuthentilensTopicalV1 out/AUTH_BB_TOMHANKS_v1_topicalV1_1080x1920_22s.mp4 --props=src/data/test-fixture-tomhanks.json"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.200",
+    "@remotion/google-fonts": "4.0.200",
+    "@remotion/media-utils": "4.0.200",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.200"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.3",
+    "typescript": "5.4.5"
+  }
+}
