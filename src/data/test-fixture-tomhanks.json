@@ -43,7 +43,7 @@
   },
   "backgroundClip": {
     "src": "assets/clips/tomhanks_publicdomain_reference.mp4",
-    "treatment": "blurred_loop_with_overlay",
+    "treatment": "none",
     "note": "use only public-domain or licensed reference; no impersonation frames"
   },
   "complianceFooter": "Probabilistic detection. Always verify independently.",
