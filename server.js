@@ -1,6 +1,5 @@
-// Minimal Remotion runtime worker for AuthentiLens engine.
-// v1: HTTP webhook -> render existing composition with hard-coded fixture or posted props.
-// Designed to lift cleanly into ClawBot as a containerized worker later.
+HELLO WORLD TEST// Minimal Remotion runtime worker for AuthentiLens engine.
+// v2: multi-lane dispatcher. Routes by props.template -> LANES registry.
 
 const http = require("http");
 const { spawn } = require("child_process");
@@ -11,15 +10,56 @@ const crypto = require("crypto");
 const PORT = process.env.PORT || 3000;
 const OUT_DIR = process.env.OUT_DIR || path.join(__dirname, "out");
 const ENTRY = "src/index.ts";
-const COMPOSITION = "AuthentilensTopicalV1";
 const TRIGGER_TOKEN = process.env.RENDER_TRIGGER_TOKEN || "";
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 
-const jobs = new Map(); // jobId -> { status, outputPath, error, startedAt, finishedAt }
+// ------------------------------------------------------------------
+// Template lane registry
+// ------------------------------------------------------------------
+const LANES = {
+  authentilens_topical_v1: {
+    command: "render",
+    compositionId: "AuthentilensTopicalV1",
+    ext: "mp4",
+    contentType: "video/mp4",
+    extraArgs: ["--concurrency=1", "--gl=swiftshader"],
+    defaultOutput: "AUTH_BB_TOMHANKS_v1_topicalV1_1080x1920_22s.mp4",
+  },
+  authentilens_static_image_v1: {
+    command: "still",
+    compositionId: "AuthentilensStaticImageV1",
+    ext: "png",
+    contentType: "image/png",
+    extraArgs: ["--gl=swiftshader"],
+    defaultOutput: "AUTH_IMG_TOMHANKS_v1_staticVerdict_1080x1080.png",
+  },
+};
+
+const DEFAULT_TEMPLATE = "authentilens_topical_v1";
+
+function resolveLane(props, bodyTemplate) {
+  const id =
+    bodyTemplate ||
+    (props && props.template) ||
+    DEFAULT_TEMPLATE;
+  const lane = LANES[id];
+  if (!lane) return { id, lane: null };
+  return { id, lane };
+}
+
+function contentTypeFor(file) {
+  const ext = path.extname(file).toLowerCase();
+  if (ext === ".mp4") return "video/mp4";
+  if (ext === ".png") return "image/png";
+  if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
+  return "application/octet-stream";
+}
+
+const jobs = new Map();
 
 function authOk(req) {
-  if (!TRIGGER_TOKEN) return true; // dev mode
+  if (!TRIGGER_TOKEN) return true;
   const h = req.headers["authorization"] || "";
   return h === `Bearer ${TRIGGER_TOKEN}`;
 }
@@ -40,9 +80,10 @@ function readJson(req) {
   });
 }
 
-function startRender({ jobId, propsPath, outFile }) {
+function startRender({ jobId, lane, templateId, propsPath, outFile }) {
   const job = {
     status: "rendering",
+    template: templateId,
     outputPath: outFile,
     error: null,
     startedAt: new Date().toISOString(),
@@ -50,8 +91,9 @@ function startRender({ jobId, propsPath, outFile }) {
   };
   jobs.set(jobId, job);
 
-  const args = ["remotion", "render", ENTRY, COMPOSITION, outFile, "--concurrency=1", "--gl=swiftshader"];
+  const args = ["remotion", lane.command, ENTRY, lane.compositionId, outFile];
   if (propsPath) args.push(`--props=${propsPath}`);
+  for (const a of lane.extraArgs) args.push(a);
 
   const proc = spawn("npx", args, { cwd: __dirname, env: process.env });
   let stderr = "";
@@ -72,7 +114,28 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "GET" && url.pathname === "/health") {
     res.writeHead(200, { "content-type": "application/json" });
-    return res.end(JSON.stringify({ ok: true, service: "authentilens-render", version: "0.1.0" }));
+    return res.end(
+      JSON.stringify({
+        ok: true,
+        service: "authentilens-render",
+        version: "0.2.0",
+        lanes: Object.keys(LANES),
+      })
+    );
+  }
+
+  if (req.method === "GET" && url.pathname === "/lanes") {
+    res.writeHead(200, { "content-type": "application/json" });
+    return res.end(
+      JSON.stringify(
+        Object.fromEntries(
+          Object.entries(LANES).map(([k, v]) => [
+            k,
+            { command: v.command, compositionId: v.compositionId, ext: v.ext },
+          ])
+        )
+      )
+    );
   }
 
   if (req.method === "GET" && url.pathname.startsWith("/jobs/")) {
@@ -92,7 +155,7 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(404);
       return res.end("not found");
     }
-    res.writeHead(200, { "content-type": "video/mp4" });
+    res.writeHead(200, { "content-type": contentTypeFor(file) });
     return fs.createReadStream(file).pipe(res);
   }
 
@@ -109,6 +172,14 @@ const server = http.createServer(async (req, res) => {
       return res.end("bad json");
     }
 
+    const { id: templateId, lane } = resolveLane(body.props, body.template);
+    if (!lane) {
+      res.writeHead(400, { "content-type": "application/json" });
+      return res.end(
+        JSON.stringify({ error: "unknown_template", template: templateId, lanes: Object.keys(LANES) })
+      );
+    }
+
     const jobId = crypto.randomUUID();
     let propsPath = null;
     let outFile;
@@ -120,18 +191,18 @@ const server = http.createServer(async (req, res) => {
         OUT_DIR,
         body.outputFilename ||
           (body.props.output && body.props.output.filename) ||
-          `render-${jobId}.mp4`
+          `render-${jobId}.${lane.ext}`
       );
     } else {
-      // fallback: use built-in defaultProps (Tom Hanks fixture)
-      outFile = path.join(OUT_DIR, `AUTH_BB_TOMHANKS_v1_topicalV1_1080x1920_22s.mp4`);
+      outFile = path.join(OUT_DIR, lane.defaultOutput);
     }
 
-    startRender({ jobId, propsPath, outFile });
+    startRender({ jobId, lane, templateId, propsPath, outFile });
     res.writeHead(202, { "content-type": "application/json" });
     return res.end(
       JSON.stringify({
         jobId,
+        template: templateId,
         status: "rendering",
         statusUrl: `/jobs/${jobId}`,
         outputUrl: `/out/${path.basename(outFile)}`,
