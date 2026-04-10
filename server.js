@@ -1,11 +1,14 @@
 // Minimal Remotion runtime worker for AuthentiLens engine.
-// v2: multi-lane dispatcher. Routes by props.template -> LANES registry.
+// v3: multi-lane dispatcher + persistent storage upload.
+// Routes by props.template -> LANES registry.
+// After successful render, uploads output to S3-compatible storage (R2/S3/B2).
 
 const http = require("http");
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { storageEnabled, uploadFile } = require("./lib/storage");
 
 const PORT = process.env.PORT || 3000;
 const OUT_DIR = process.env.OUT_DIR || path.join(__dirname, "out");
@@ -17,6 +20,7 @@ if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 // ------------------------------------------------------------------
 // Template lane registry
 // ------------------------------------------------------------------
+
 const LANES = {
   authentilens_topical_v1: {
     command: "render",
@@ -38,12 +42,6 @@ const LANES = {
 
 const DEFAULT_TEMPLATE = "authentilens_topical_v1";
 
-// Lane resolution precedence (canonical -> fallback):
-//   1. body.template_key       (Airtable / control-layer canonical)
-//   2. body.template           (legacy / backward-compatible)
-//   3. props.template_key      (props-level canonical fallback)
-//   4. props.template          (props-level legacy fallback)
-//   5. DEFAULT_TEMPLATE
 function resolveLane(body) {
   const props = (body && body.props) || {};
   const id =
@@ -89,28 +87,80 @@ function readJson(req) {
   });
 }
 
+// ------------------------------------------------------------------
+// Persistent upload (runs after successful render)
+// ------------------------------------------------------------------
+
+async function persistOutput(job, jobId) {
+  if (!storageEnabled()) {
+    console.log(`[${jobId}] storage not configured — skipping upload`);
+    return;
+  }
+
+  const localPath = job.outputPath;
+  if (!localPath || !fs.existsSync(localPath)) {
+    console.error(`[${jobId}] output file missing: ${localPath}`);
+    return;
+  }
+
+  const filename = path.basename(localPath);
+  const key = `renders/${filename}`;
+
+  try {
+    console.log(`[${jobId}] uploading ${filename} to storage…`);
+    const result = await uploadFile(localPath, key);
+    job.permanentUrl = result.url;
+    job.storageKey = result.key;
+    console.log(`[${jobId}] uploaded → ${result.url}`);
+  } catch (err) {
+    // Upload failure does NOT change render status — the render itself succeeded.
+    // Operator can re-upload manually or re-render.
+    console.error(`[${jobId}] storage upload failed: ${err.message}`);
+    job.uploadError = err.message;
+  }
+}
+
+// ------------------------------------------------------------------
+// Render dispatch
+// ------------------------------------------------------------------
+
 function startRender({ jobId, lane, templateId, propsPath, outFile }) {
   const job = {
     status: "rendering",
     template: templateId,
     outputPath: outFile,
     error: null,
+    permanentUrl: null,
+    storageKey: null,
+    uploadError: null,
     startedAt: new Date().toISOString(),
     finishedAt: null,
   };
   jobs.set(jobId, job);
 
-  const args = ["remotion", lane.command, ENTRY, lane.compositionId, outFile];
+  const args = [
+    "remotion",
+    lane.command,
+    ENTRY,
+    lane.compositionId,
+    outFile,
+  ];
   if (propsPath) args.push(`--props=${propsPath}`);
   for (const a of lane.extraArgs) args.push(a);
 
   const proc = spawn("npx", args, { cwd: __dirname, env: process.env });
+
   let stderr = "";
   proc.stderr.on("data", (d) => (stderr += d.toString()));
+
   proc.on("close", (code) => {
     job.finishedAt = new Date().toISOString();
     if (code === 0) {
       job.status = "rendered";
+      // Fire-and-forget upload to persistent storage.
+      // Job status is already "rendered" — poll will see it immediately.
+      // permanentUrl gets set asynchronously once upload completes.
+      persistOutput(job, jobId);
     } else {
       job.status = "failed";
       job.error = stderr.slice(-2000);
@@ -118,21 +168,28 @@ function startRender({ jobId, lane, templateId, propsPath, outFile }) {
   });
 }
 
+// ------------------------------------------------------------------
+// HTTP server
+// ------------------------------------------------------------------
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
 
+  // ---- Health
   if (req.method === "GET" && url.pathname === "/health") {
     res.writeHead(200, { "content-type": "application/json" });
     return res.end(
       JSON.stringify({
         ok: true,
         service: "authentilens-render",
-        version: "0.2.0",
+        version: "0.3.0",
         lanes: Object.keys(LANES),
+        storageEnabled: storageEnabled(),
       })
     );
   }
 
+  // ---- Lanes
   if (req.method === "GET" && url.pathname === "/lanes") {
     res.writeHead(200, { "content-type": "application/json" });
     return res.end(
@@ -147,6 +204,7 @@ const server = http.createServer(async (req, res) => {
     );
   }
 
+  // ---- Job status
   if (req.method === "GET" && url.pathname.startsWith("/jobs/")) {
     const id = url.pathname.split("/")[2];
     const job = jobs.get(id);
@@ -155,9 +213,23 @@ const server = http.createServer(async (req, res) => {
       return res.end("not found");
     }
     res.writeHead(200, { "content-type": "application/json" });
-    return res.end(JSON.stringify({ jobId: id, ...job }));
+    return res.end(
+      JSON.stringify({
+        jobId: id,
+        status: job.status,
+        template: job.template,
+        outputPath: job.outputPath,
+        error: job.error,
+        permanentUrl: job.permanentUrl,
+        storageKey: job.storageKey,
+        uploadError: job.uploadError,
+        startedAt: job.startedAt,
+        finishedAt: job.finishedAt,
+      })
+    );
   }
 
+  // ---- Serve output files (ephemeral, for debugging / fallback)
   if (req.method === "GET" && url.pathname.startsWith("/out/")) {
     const file = path.join(OUT_DIR, path.basename(url.pathname));
     if (!fs.existsSync(file)) {
@@ -168,11 +240,13 @@ const server = http.createServer(async (req, res) => {
     return fs.createReadStream(file).pipe(res);
   }
 
+  // ---- Dispatch render
   if (req.method === "POST" && url.pathname === "/render") {
     if (!authOk(req)) {
       res.writeHead(401);
       return res.end("unauthorized");
     }
+
     let body = {};
     try {
       body = await readJson(req);
@@ -185,7 +259,11 @@ const server = http.createServer(async (req, res) => {
     if (!lane) {
       res.writeHead(400, { "content-type": "application/json" });
       return res.end(
-        JSON.stringify({ error: "unknown_template", template: templateId, lanes: Object.keys(LANES) })
+        JSON.stringify({
+          error: "unknown_template",
+          template: templateId,
+          lanes: Object.keys(LANES),
+        })
       );
     }
 
@@ -207,6 +285,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     startRender({ jobId, lane, templateId, propsPath, outFile });
+
     res.writeHead(202, { "content-type": "application/json" });
     return res.end(
       JSON.stringify({
@@ -224,5 +303,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`authentilens-render listening on :${PORT}`);
+  console.log(`authentilens-render v0.3.0 listening on :${PORT}`);
+  console.log(`storage: ${storageEnabled() ? "ENABLED" : "DISABLED (set STORAGE_* env vars)"}`);
 });
