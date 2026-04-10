@@ -9,7 +9,7 @@
   "brand": {
     "colors": { "navy": "#0B1F3A", "teal": "#00C2A8", "bg": "#F5F7FA", "red": "#EF4444" },
     "fonts": { "display": "Space Grotesk", "body": "Inter" },
-    "logo": "assets/brand/authentilens_logo.svg",
+    "logo": "",
     "musicBed": ""
   },
   "hook": {
