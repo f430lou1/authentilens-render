@@ -239,7 +239,7 @@ export const AuthentilensTopicalV1: React.FC<AuthentilensTopicalV1Props> = (prop
         </Sequence>
       ))}
 
-      <Sequence from={verdictOverlay.appearAtFrame} durationInFrames={ctaStart - verdictOverlay.appearAtFrame}>
+      <Sequence from={verdictOverlay.appearAtFrame} durationInFrames={Math.max(1, ctaStart + cta.frames - verdictOverlay.appearAtFrame)}>
         <VerdictOverlay overlay={verdictOverlay} brand={brand} />
       </Sequence>
 
