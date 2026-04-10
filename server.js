@@ -50,7 +50,7 @@ function startRender({ jobId, propsPath, outFile }) {
   };
   jobs.set(jobId, job);
 
-  const args = ["remotion", "render", ENTRY, COMPOSITION, outFile];
+  const args = ["remotion", "render", ENTRY, COMPOSITION, outFile, "--concurrency=1", "--gl=swiftshader"];
   if (propsPath) args.push(`--props=${propsPath}`);
 
   const proc = spawn("npx", args, { cwd: __dirname, env: process.env });
