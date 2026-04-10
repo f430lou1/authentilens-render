@@ -38,10 +38,19 @@ const LANES = {
 
 const DEFAULT_TEMPLATE = "authentilens_topical_v1";
 
-function resolveLane(props, bodyTemplate) {
+// Lane resolution precedence (canonical -> fallback):
+//   1. body.template_key       (Airtable / control-layer canonical)
+//   2. body.template           (legacy / backward-compatible)
+//   3. props.template_key      (props-level canonical fallback)
+//   4. props.template          (props-level legacy fallback)
+//   5. DEFAULT_TEMPLATE
+function resolveLane(body) {
+  const props = (body && body.props) || {};
   const id =
-    bodyTemplate ||
-    (props && props.template) ||
+    (body && body.template_key) ||
+    (body && body.template) ||
+    props.template_key ||
+    props.template ||
     DEFAULT_TEMPLATE;
   const lane = LANES[id];
   if (!lane) return { id, lane: null };
@@ -172,7 +181,7 @@ const server = http.createServer(async (req, res) => {
       return res.end("bad json");
     }
 
-    const { id: templateId, lane } = resolveLane(body.props, body.template);
+    const { id: templateId, lane } = resolveLane(body);
     if (!lane) {
       res.writeHead(400, { "content-type": "application/json" });
       return res.end(
