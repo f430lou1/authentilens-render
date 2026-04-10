@@ -10,7 +10,7 @@
     "colors": { "navy": "#0B1F3A", "teal": "#00C2A8", "bg": "#F5F7FA", "red": "#EF4444" },
     "fonts": { "display": "Space Grotesk", "body": "Inter" },
     "logo": "assets/brand/authentilens_logo.svg",
-    "musicBed": "assets/audio/bed_calm_authoritative_22s.mp3"
+    "musicBed": ""
   },
   "hook": {
     "text": "This Tom Hanks ad is fake. He's already said so. Here's the tell.",
@@ -35,7 +35,7 @@
     "style": "endcard"
   },
   "voiceover": {
-    "required": true,
+    "required": false,
     "engine": "elevenlabs",
     "voiceId": "TBD_authentilens_calm_male_v1",
     "script": "This Tom Hanks ad is fake. He's already said so. Watch the mouth shapes — they don't match the words. The skin texture stays frozen between blinks. The audio is too clean for a phone capture. Hanks publicly disavowed AI ads of himself in 2023. Before you trust any celebrity endorsement, scan it. Five free scans, no account needed.",
