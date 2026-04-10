@@ -1,4 +1,4 @@
-HELLO WORLD TEST// Minimal Remotion runtime worker for AuthentiLens engine.
+// Minimal Remotion runtime worker for AuthentiLens engine.
 // v2: multi-lane dispatcher. Routes by props.template -> LANES registry.
 
 const http = require("http");
