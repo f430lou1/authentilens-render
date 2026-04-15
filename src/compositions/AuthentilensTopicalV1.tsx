@@ -201,6 +201,7 @@ const CtaEndcard: React.FC<{
 const Background: React.FC<{ clip: AuthentilensTopicalV1Props["backgroundClip"] }> = ({
   clip,
 }) => {
+  if (!clip) return null;
   const src = safeStaticFile(clip.src);
   if (!src || clip.treatment === "none") return null;
   return (
