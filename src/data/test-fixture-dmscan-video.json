@@ -26,10 +26,10 @@
     "style": "kinetic_caption"
   },
   "body": [
-    {"text": "The profile photo is stolen from a stock site.", "frames": 90},
-    {"text": "They swear it's morning. Timestamps say 3am.", "frames": 90},
-    {"text": "The link they sent was registered eleven days ago.", "frames": 90},
-    {"text": "The message matches a known scam script, word for word.", "frames": 120}
+    { "text": "The profile photo is stolen from a stock site.", "frames": 90 },
+    { "text": "They swear it's morning. Timestamps say 3am.", "frames": 90 },
+    { "text": "The link they sent was registered eleven days ago.", "frames": 90 },
+    { "text": "The message matches a known scam script, word for word.", "frames": 120 }
   ],
   "verdictOverlay": {
     "label": "LIKELY SCAM",
@@ -57,5 +57,64 @@
     "filename": "AUTH_BB_DMSCAN_v1_topicalV1_1080x1920_22s.mp4",
     "codec": "h264",
     "crf": 18
-  }
+  },
+
+  "phoneMockup": {
+    "handle": "@dani.helps_",
+    "displayName": "Dani",
+    "verifiedClaim": false,
+    "appBadge": "instagram",
+    "pinnedTimestamp": "3:11",
+    "messages": [
+      {
+        "from": "them",
+        "text": "hey! good morning ☀️ are you up?",
+        "timestamp": "3:11 AM",
+        "flagged": true
+      },
+      {
+        "from": "them",
+        "text": "I have a quick crypto opp before market opens — only need 5 min of your time",
+        "timestamp": "3:12 AM",
+        "flagged": true
+      },
+      {
+        "from": "them",
+        "text": "tap here so I can send you the breakdown ➡️ bit.ly/x9z-deal",
+        "timestamp": "3:13 AM",
+        "flagged": true
+      }
+    ]
+  },
+
+  "evidence": [
+    {
+      "id": "ev1",
+      "kind": "image_match",
+      "label": "Profile photo reverse-image hit",
+      "detail": "Stock site (Pexels)",
+      "flagged": true
+    },
+    {
+      "id": "ev2",
+      "kind": "metadata",
+      "label": "Timestamp mismatch",
+      "detail": "\"good morning\" sent at 3:11 AM",
+      "flagged": true
+    },
+    {
+      "id": "ev3",
+      "kind": "link",
+      "label": "Domain age",
+      "detail": "bit.ly/x9z-deal registered 11 days ago",
+      "flagged": true
+    },
+    {
+      "id": "ev4",
+      "kind": "message",
+      "label": "Script match",
+      "detail": "Matches known scam template (word-for-word)",
+      "flagged": true
+    }
+  ]
 }

@@ -8,6 +8,8 @@ import {
 } from "./types/remotion";
 import topicalFixture from "./data/test-fixture-tomhanks.json";
 import staticFixture from "./data/test-fixture-static-verdict.json";
+import { AuthentilensTopicalV1ColdOpenPreview } from "./compositions/AuthentilensTopicalV1ColdOpenPreview";
+import dmscanFixture from "./data/test-fixture-dmscan-video.json";
 
 const topicalProps = topicalFixture as unknown as AuthentilensTopicalV1Props;
 const staticProps = staticFixture as unknown as AuthentilensStaticImageV1Props;
@@ -24,6 +26,17 @@ export const RemotionRoot: React.FC = () => {
         width={topicalProps.width}
         height={topicalProps.height}
         defaultProps={topicalProps}
+      />
+
+      {/* Lane 1b: Scene 1 Cold Open preview (2s visual-spine proof) */}
+      <Composition
+        id="AuthentilensTopicalV1ColdOpenPreview"
+        component={AuthentilensTopicalV1ColdOpenPreview}
+        durationInFrames={60}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={dmscanFixture as never}
       />
 
       {/* Lane 2: static image card (1080x1080 single-frame) */}

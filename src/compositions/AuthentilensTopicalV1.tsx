@@ -11,7 +11,23 @@ import {
   interpolate,
   spring,
 } from "remotion";
-import { AuthentilensTopicalV1Props } from "../types/remotion";
+import { AuthentilensTopicalV1Props as _TV1BaseProps } from "../types/remotion";
+import type { PhoneMockupProps } from "../components/PhoneMockup";
+
+// Scene-spine types (additive). Optional on Props so legacy fixtures keep working.
+export type EvidenceKind = "message" | "metadata" | "link" | "image_match";
+export type EvidenceItem = {
+  id: string;
+  kind: EvidenceKind;
+  label: string;
+  detail?: string;
+  flagged?: boolean;
+};
+
+export type AuthentilensTopicalV1Props = _TV1BaseProps & {
+  phoneMockup?: PhoneMockupProps;
+  evidence?: EvidenceItem[];
+};
 import { buildBodySegments } from "../utils/timing";
 
 const safeStaticFile = (p?: string) => {
