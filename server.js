@@ -38,6 +38,14 @@ const LANES = {
     extraArgs: ["--concurrency=1", "--gl=swiftshader"],
     defaultOutput: "AUTH_BB_DMSCAN_v1_coldopen_preview_2s.mp4",
   },
+  authentilens_topical_v1_cold_open_plus_beat1_preview: {
+    command: "render",
+    compositionId: "AuthentilensTopicalV1ColdOpenPlusBeat1Preview",
+    ext: "mp4",
+    contentType: "video/mp4",
+    extraArgs: ["--concurrency=1", "--gl=swiftshader"],
+    defaultOutput: "AUTH_BB_DMSCAN_v1_coldopen_plus_beat1_preview_5s.mp4",
+  },
   authentilens_static_image_v1: {
     command: "still",
     compositionId: "AuthentilensStaticImageV1",
@@ -101,7 +109,7 @@ function readJson(req) {
 
 async function persistOutput(job, jobId) {
   if (!storageEnabled()) {
-    console.log(`[${jobId}] storage not configured — skipping upload`);
+    console.log(`[${jobId}] storage not configured â skipping upload`);
     return;
   }
 
@@ -115,13 +123,13 @@ async function persistOutput(job, jobId) {
   const key = `renders/${filename}`;
 
   try {
-    console.log(`[${jobId}] uploading ${filename} to storage…`);
+    console.log(`[${jobId}] uploading ${filename} to storageâ¦`);
     const result = await uploadFile(localPath, key);
     job.permanentUrl = result.url;
     job.storageKey = result.key;
-    console.log(`[${jobId}] uploaded → ${result.url}`);
+    console.log(`[${jobId}] uploaded â ${result.url}`);
   } catch (err) {
-    // Upload failure does NOT change render status — the render itself succeeded.
+    // Upload failure does NOT change render status â the render itself succeeded.
     // Operator can re-upload manually or re-render.
     console.error(`[${jobId}] storage upload failed: ${err.message}`);
     job.uploadError = err.message;
@@ -166,7 +174,7 @@ function startRender({ jobId, lane, templateId, propsPath, outFile }) {
     if (code === 0) {
       job.status = "rendered";
       // Fire-and-forget upload to persistent storage.
-      // Job status is already "rendered" — poll will see it immediately.
+      // Job status is already "rendered" â poll will see it immediately.
       // permanentUrl gets set asynchronously once upload completes.
       persistOutput(job, jobId);
     } else {
