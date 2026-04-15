@@ -1,0 +1,61 @@
+{
+  "template": "authentilens_topical_v1",
+  "version": "0.1.0",
+  "recordId": "recgQg3ab54JyUofX",
+  "durationInFrames": 660,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "brand": {
+    "colors": {
+      "navy": "#0B1F3A",
+      "teal": "#00C2A8",
+      "bg": "#F5F7FA",
+      "red": "#EF4444"
+    },
+    "fonts": {
+      "display": "Space Grotesk",
+      "body": "Inter"
+    },
+    "logo": "assets/brand/authentilens_logo.svg",
+    "musicBed": null
+  },
+  "hook": {
+    "text": "This DM is a scam. Here are the 4 tells.",
+    "durationFrames": 90,
+    "style": "kinetic_caption"
+  },
+  "body": [
+    {"text": "The profile photo is stolen from a stock site.", "frames": 90},
+    {"text": "They swear it's morning. Timestamps say 3am.", "frames": 90},
+    {"text": "The link they sent was registered eleven days ago.", "frames": 90},
+    {"text": "The message matches a known scam script, word for word.", "frames": 120}
+  ],
+  "verdictOverlay": {
+    "label": "LIKELY SCAM",
+    "score": "91/100 confidence",
+    "color": "#EF4444",
+    "appearAtFrame": 480
+  },
+  "cta": {
+    "text": "Scan before you reply. 5 free scans. No account needed.",
+    "frames": 120,
+    "style": "endcard"
+  },
+  "voiceover": {
+    "required": true,
+    "engine": "elevenlabs",
+    "voiceId": "pNInz6obpgDQGcFmaJgB",
+    "model": "eleven_multilingual_v2",
+    "audioFile": "assets/audio/vo_dmscan_v1.mp3",
+    "durationSeconds": 18.808,
+    "script": "This DM is a scam. Four tells. Profile photo stolen from a stock site. Claims morning — timestamps say three a.m. The link was registered eleven days ago. Matches a known scam script, word for word. Scan before you reply. Five free scans. No account."
+  },
+  "backgroundClip": null,
+  "complianceFooter": "Probabilistic detection. Always verify independently.",
+  "output": {
+    "filename": "AUTH_BB_DMSCAN_v1_topicalV1_1080x1920_22s.mp4",
+    "codec": "h264",
+    "crf": 18
+  }
+}
