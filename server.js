@@ -46,6 +46,14 @@ const LANES = {
     extraArgs: ["--concurrency=1", "--gl=swiftshader"],
     defaultOutput: "AUTH_BB_DMSCAN_v1_coldopen_plus_beat1_preview_5s.mp4",
   },
+  authentilens_topical_v1_cold_open_plus_beat2_preview: {
+    command: "render",
+    compositionId: "AuthentilensTopicalV1ColdOpenPlusBeat2Preview",
+    ext: "mp4",
+    contentType: "video/mp4",
+    extraArgs: ["--concurrency=1", "--gl=swiftshader"],
+    defaultOutput: "AUTH_BB_DMSCAN_v1_coldopen_plus_beat2_preview_8s.mp4",
+  },
   authentilens_static_image_v1: {
     command: "still",
     compositionId: "AuthentilensStaticImageV1",
