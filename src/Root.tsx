@@ -9,6 +9,7 @@ import {
 import topicalFixture from "./data/test-fixture-tomhanks.json";
 import staticFixture from "./data/test-fixture-static-verdict.json";
 import { AuthentilensTopicalV1ColdOpenPreview } from "./compositions/AuthentilensTopicalV1ColdOpenPreview";
+import { AuthentilensTopicalV1ColdOpenPlusBeat1Preview } from "./compositions/AuthentilensTopicalV1ColdOpenPlusBeat1Preview";
 import dmscanFixture from "./data/test-fixture-dmscan-video.json";
 
 const topicalProps = topicalFixture as unknown as AuthentilensTopicalV1Props;
@@ -33,6 +34,17 @@ export const RemotionRoot: React.FC = () => {
         id="AuthentilensTopicalV1ColdOpenPreview"
         component={AuthentilensTopicalV1ColdOpenPreview}
         durationInFrames={60}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={dmscanFixture as never}
+      />
+
+      {/* Lane 1c: cold open + Beat 1 evidence annotation preview (5s) */}
+      <Composition
+        id="AuthentilensTopicalV1ColdOpenPlusBeat1Preview"
+        component={AuthentilensTopicalV1ColdOpenPlusBeat1Preview}
+        durationInFrames={150}
         fps={30}
         width={1080}
         height={1920}
