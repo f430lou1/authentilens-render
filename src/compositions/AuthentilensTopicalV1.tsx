@@ -147,7 +147,7 @@ const VerdictOverlay: React.FC<{
           boxShadow: "0 12px 48px rgba(0,0,0,0.35)",
         }}
       >
-        {overlay.label} Â· {overlay.score}
+        {overlay.label} ÃÂ· {overlay.score}
       </div>
     </AbsoluteFill>
   );
@@ -217,7 +217,8 @@ const CtaEndcard: React.FC<{
 const Background: React.FC<{ clip: AuthentilensTopicalV1Props["backgroundClip"] }> = ({
   clip,
 }) => {
-  if (!clip) return null;
+  // Null-safe Background: backgroundClip may be null/undefined per fixture.
+  // Guard before any property access on clip (was bug: clip.src crashed when clip was null).
   if (!clip || clip.treatment === "none") return null;
   const src = safeStaticFile(clip.src);
   if (!src) return null;
