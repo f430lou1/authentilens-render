@@ -30,6 +30,14 @@ const LANES = {
     extraArgs: ["--concurrency=1", "--gl=swiftshader"],
     defaultOutput: "AUTH_BB_TOMHANKS_v1_topicalV1_1080x1920_22s.mp4",
   },
+  authentilens_topical_v1_cold_open_preview: {
+    command: "render",
+    compositionId: "AuthentilensTopicalV1ColdOpenPreview",
+    ext: "mp4",
+    contentType: "video/mp4",
+    extraArgs: ["--concurrency=1", "--gl=swiftshader"],
+    defaultOutput: "AUTH_BB_DMSCAN_v1_coldopen_preview_2s.mp4",
+  },
   authentilens_static_image_v1: {
     command: "still",
     compositionId: "AuthentilensStaticImageV1",
