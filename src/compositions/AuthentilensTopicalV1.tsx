@@ -131,7 +131,7 @@ const VerdictOverlay: React.FC<{
           boxShadow: "0 12px 48px rgba(0,0,0,0.35)",
         }}
       >
-        {overlay.label} · {overlay.score}
+        {overlay.label} Â· {overlay.score}
       </div>
     </AbsoluteFill>
   );
@@ -202,8 +202,9 @@ const Background: React.FC<{ clip: AuthentilensTopicalV1Props["backgroundClip"] 
   clip,
 }) => {
   if (!clip) return null;
+  if (!clip || clip.treatment === "none") return null;
   const src = safeStaticFile(clip.src);
-  if (!src || clip.treatment === "none") return null;
+  if (!src) return null;
   return (
     <AbsoluteFill style={{ filter: "blur(32px) brightness(0.4)" }}>
       <Video src={src} muted loop />
