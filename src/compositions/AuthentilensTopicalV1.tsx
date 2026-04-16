@@ -12,6 +12,7 @@ import {
   spring,
 } from "remotion";
 import { AuthentilensTopicalV1Props as _TV1BaseProps } from "../types/remotion";
+import { PhoneMockup } from "../components/PhoneMockup";
 import type { PhoneMockupProps } from "../components/PhoneMockup";
 
 // Scene-spine types (additive). Optional on Props so legacy fixtures keep working.
@@ -279,6 +280,95 @@ const DomainAgeEvidenceCard: React.FC<{
   );
 };
 
+/* -- Beat-1 phone + spotlight + callout (ported from ColdOpenPlusBeat1Preview) -- */
+const PHONE_WIDTH = 760;
+const PHONE_HEIGHT = 1500;
+const FRAME_WIDTH = 1080;
+const FRAME_HEIGHT = 1920;
+
+const Spotlight: React.FC<{
+  cx: number; cy: number; rx: number; ry: number; teal: string;
+}> = ({ cx, cy, rx, ry, teal }) => (
+  <svg
+    width={FRAME_WIDTH}
+    height={FRAME_HEIGHT}
+    viewBox={`0 0 ${FRAME_WIDTH} ${FRAME_HEIGHT}`}
+    style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+  >
+    <defs>
+      <mask id="spotlight-mask">
+        <rect width="100%" height="100%" fill="white" />
+        <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="black" />
+      </mask>
+    </defs>
+    <rect width="100%" height="100%" fill="rgba(0,0,0,0.58)" mask="url(#spotlight-mask)" />
+    <ellipse cx={cx} cy={cy} rx={rx + 6} ry={ry + 6} fill="none" stroke={teal} strokeWidth={4} strokeDasharray="6 8" />
+  </svg>
+);
+
+const EvidenceCallout: React.FC<{
+  item: EvidenceItem;
+  brand: AuthentilensTopicalV1Props["brand"];
+  anchor: { x: number; y: number };
+  box: { x: number; y: number; width: number };
+  opacity: number;
+}> = ({ item, brand, anchor, box, opacity }) => {
+  const pillCenterY = box.y + 62;
+  return (
+    <>
+      <svg
+        width={FRAME_WIDTH} height={FRAME_HEIGHT}
+        viewBox={`0 0 ${FRAME_WIDTH} ${FRAME_HEIGHT}`}
+        style={{ position: "absolute", inset: 0, opacity }}
+      >
+        <line x1={anchor.x} y1={anchor.y} x2={box.x + 10} y2={pillCenterY} stroke={brand.colors.teal} strokeWidth={3} />
+        <circle cx={anchor.x} cy={anchor.y} r={8} fill={brand.colors.teal} />
+      </svg>
+      <div
+        style={{
+          position: "absolute", left: box.x, top: box.y, width: box.width,
+          padding: "20px 26px", background: brand.colors.navy, color: brand.colors.bg,
+          borderRadius: 22, border: `2px solid ${brand.colors.teal}`,
+          boxShadow: "0 18px 44px rgba(0,0,0,0.4)", fontFamily: brand.fonts.body, opacity,
+        }}
+      >
+        <div style={{ color: brand.colors.teal, fontFamily: brand.fonts.display, fontWeight: 800, fontSize: 20, letterSpacing: 2, marginBottom: 6, textTransform: "uppercase" }}>
+          Evidence 1 / 4
+        </div>
+        <div style={{ fontWeight: 700, fontSize: 30, lineHeight: 1.15 }}>{item.label}</div>
+        {item.detail ? <div style={{ marginTop: 8, fontSize: 22, opacity: 0.85 }}>{item.detail}</div> : null}
+      </div>
+    </>
+  );
+};
+
+const Beat1PhoneMockupScene: React.FC<{
+  phone: PhoneMockupProps;
+  evidence: EvidenceItem;
+  brand: AuthentilensTopicalV1Props["brand"];
+}> = ({ phone, evidence, brand }) => {
+  const frame = useCurrentFrame();
+  const scrimOpacity = interpolate(frame, [0, 12], [0, 1], { extrapolateRight: "clamp" });
+  const calloutOpacity = interpolate(frame, [10, 24], [0, 1], { extrapolateRight: "clamp" });
+  const phoneLeft = (FRAME_WIDTH - PHONE_WIDTH) / 2;
+  const phoneTop = (FRAME_HEIGHT - PHONE_HEIGHT) / 2;
+  const avatarCx = phoneLeft + 14 + 28 + 36;
+  const avatarCy = phoneTop + 14 + 70 + 65;
+  const rx = 82;
+  const ry = 82;
+  const boxObj = { x: phoneLeft + PHONE_WIDTH - 60, y: avatarCy - 70, width: 440 };
+  const anchorPt = { x: avatarCx + rx + 6, y: avatarCy };
+  return (
+    <AbsoluteFill>
+      <PhoneMockup data={phone} width={PHONE_WIDTH} height={PHONE_HEIGHT} />
+      <AbsoluteFill style={{ opacity: scrimOpacity }}>
+        <Spotlight cx={avatarCx} cy={avatarCy} rx={rx} ry={ry} teal={brand.colors.teal} />
+      </AbsoluteFill>
+      <EvidenceCallout item={evidence} brand={brand} anchor={anchorPt} box={boxObj} opacity={calloutOpacity} />
+    </AbsoluteFill>
+  );
+};
+
 const BodyBeatCard: React.FC<{
   text: string;
   brand: AuthentilensTopicalV1Props["brand"];
@@ -437,7 +527,7 @@ const Background: React.FC<{ clip: AuthentilensTopicalV1Props["backgroundClip"] 
 };
 
 export const AuthentilensTopicalV1: React.FC<AuthentilensTopicalV1Props> = (props) => {
-  const { hook, body, verdictOverlay, cta, brand, voiceover, backgroundClip, complianceFooter } =
+  const { hook, body, verdictOverlay, cta, brand, voiceover, backgroundClip, complianceFooter, phoneMockup, evidence } =
     props;
 
   const hookFrames = hook.durationFrames;
@@ -461,7 +551,11 @@ export const AuthentilensTopicalV1: React.FC<AuthentilensTopicalV1Props> = (prop
 
       {bodySegments.map((seg, i) => (
         <Sequence key={i} from={seg.from} durationInFrames={seg.durationInFrames}>
-          <BodyBeatCard text={body[i].text} brand={brand} index={i} />
+          {i === 0 && phoneMockup && evidence?.[0] ? (
+            <Beat1PhoneMockupScene phone={phoneMockup} evidence={evidence[0]} brand={brand} />
+          ) : (
+            <BodyBeatCard text={body[i].text} brand={brand} index={i} />
+          )}
         </Sequence>
       ))}
 
