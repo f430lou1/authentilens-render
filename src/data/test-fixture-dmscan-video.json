@@ -98,8 +98,8 @@
     {
       "id": "ev2",
       "kind": "metadata",
-      "label": "Timestamp mismatch",
-      "detail": "\"good morning\" sent at 3:11 AM",
+      "label": "Read the time again.",
+      "detail": "Nobody says \"good morning\" at 3:11 AM.",
       "flagged": true
     },
     {
