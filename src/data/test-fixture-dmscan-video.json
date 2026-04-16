@@ -26,10 +26,22 @@
     "style": "kinetic_caption"
   },
   "body": [
-    { "text": "The profile photo is stolen from a stock site.", "frames": 90 },
-    { "text": "They swear it's morning. Timestamps say 3am.", "frames": 90 },
-    { "text": "The link they sent was registered eleven days ago.", "frames": 90 },
-    { "text": "The message matches a known scam script, word for word.", "frames": 120 }
+    {
+      "text": "The profile photo is stolen from a stock site.",
+      "frames": 90
+    },
+    {
+      "text": "They swear it's morning. Timestamps say 3am.",
+      "frames": 90
+    },
+    {
+      "text": "The link they sent was registered eleven days ago.",
+      "frames": 90
+    },
+    {
+      "text": "The message matches a known scam script, word for word.",
+      "frames": 120
+    }
   ],
   "verdictOverlay": {
     "label": "LIKELY SCAM",
@@ -49,7 +61,7 @@
     "model": "eleven_multilingual_v2",
     "audioFile": "assets/audio/vo_dmscan_v1.mp3",
     "durationSeconds": 18.808,
-    "script": "This DM is a scam. Four tells. Profile photo stolen from a stock site. Claims morning — timestamps say three a.m. The link was registered eleven days ago. Matches a known scam script, word for word. Scan before you reply. Five free scans. No account."
+    "script": "This DM is a scam. Four tells. Profile photo stolen from a stock site. Claims morning â timestamps say three a.m. The link was registered eleven days ago. Matches a known scam script, word for word. Scan before you reply. Five free scans. No account."
   },
   "backgroundClip": null,
   "complianceFooter": "Probabilistic detection. Always verify independently.",
@@ -58,63 +70,58 @@
     "codec": "h264",
     "crf": 18
   },
-
   "phoneMockup": {
-    "handle": "@dani.helps_",
-    "displayName": "Dani",
-    "verifiedClaim": false,
+    "handle": "@wealth.mentor.2024",
+    "displayName": "Marcus Chen",
+    "verifiedClaim": true,
     "appBadge": "instagram",
     "pinnedTimestamp": "3:11",
     "messages": [
       {
         "from": "them",
-        "text": "hey! good morning ☀️ are you up?",
+        "text": "Hey! I saw your post about side hustles. I made $12k last month with this one simple method.",
         "timestamp": "3:11 AM",
         "flagged": true
       },
       {
+        "from": "you",
+        "text": "Really? How?",
+        "timestamp": "3:12 AM"
+      },
+      {
         "from": "them",
-        "text": "I have a quick crypto opp before market opens — only need 5 min of your time",
+        "text": "I can show you everything. Just need you to sign up through my link. It's totally free to start.",
         "timestamp": "3:12 AM",
         "flagged": true
       },
       {
         "from": "them",
-        "text": "tap here so I can send you the breakdown ➡️ bit.ly/x9z-deal",
+        "text": "bit.ly/ez-wealth-now",
         "timestamp": "3:13 AM",
         "flagged": true
       }
     ]
   },
-
   "evidence": [
     {
-      "id": "ev1",
-      "kind": "image_match",
-      "label": "Profile photo reverse-image hit",
-      "detail": "Stock site (Pexels)",
-      "flagged": true
+      "kind": "stolen_photo",
+      "label": "Profile photo is stolen",
+      "detail": "Reverse-image search matches a stock photography site. Not a real person."
     },
     {
-      "id": "ev2",
-      "kind": "metadata",
-      "label": "Read the time again.",
-      "detail": "Nobody says \"good morning\" at 3:11 AM.",
-      "flagged": true
+      "kind": "timestamp_anomaly",
+      "label": "Timestamps don't add up",
+      "detail": "Claims it's morning, but messages sent at 3:11 AM local time."
     },
     {
-      "id": "ev3",
-      "kind": "link",
-      "label": "Domain age",
-      "detail": "bit.ly/x9z-deal registered 11 days ago",
-      "flagged": true
+      "kind": "domain_age",
+      "label": "Link registered 11 days ago",
+      "detail": "bit.ly redirect leads to a domain created less than two weeks ago."
     },
     {
-      "id": "ev4",
-      "kind": "message",
-      "label": "Script match",
-      "detail": "Matches known scam template (word-for-word)",
-      "flagged": true
+      "kind": "script_match",
+      "label": "Known scam script match",
+      "detail": "Message text matches a flagged template used in 240+ reported scam campaigns."
     }
   ]
 }
