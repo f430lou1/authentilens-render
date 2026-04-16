@@ -164,6 +164,121 @@ const StolenPhotoEvidenceCard: React.FC<{
   );
 };
 
+
+const DomainAgeEvidenceCard: React.FC<{
+  brand: AuthentilensTopicalV1Props["brand"];
+  y: number;
+  opacity: number;
+}> = ({ brand, y, opacity }) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginBottom: 40,
+        transform: `translateY(${y}px)`,
+        opacity,
+      }}
+    >
+      <div
+        style={{
+          position: "relative",
+          width: 640,
+          padding: "28px 36px",
+          borderRadius: 24,
+          background: `linear-gradient(135deg, ${brand.colors.navy} 0%, #162d50 100%)`,
+          boxShadow: "0 12px 32px rgba(0,0,0,0.22)",
+          border: `3px solid ${brand.colors.teal}`,
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: "50%",
+              backgroundColor: brand.colors.red,
+              flexShrink: 0,
+            }}
+          />
+          <div
+            style={{
+              fontFamily: brand.fonts.body,
+              fontSize: 28,
+              color: "rgba(255,255,255,0.5)",
+              letterSpacing: 1,
+            }}
+          >
+            WHOIS LOOKUP
+          </div>
+        </div>
+        <div
+          style={{
+            fontFamily: brand.fonts.body,
+            fontSize: 32,
+            color: "rgba(255,255,255,0.7)",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+            paddingBottom: 12,
+          }}
+        >
+          scam-link-example.xyz
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: brand.fonts.body,
+              fontSize: 26,
+              color: "rgba(255,255,255,0.5)",
+            }}
+          >
+            Registered
+          </div>
+          <div
+            style={{
+              fontFamily: brand.fonts.display,
+              fontSize: 44,
+              fontWeight: 800,
+              color: brand.colors.red,
+              letterSpacing: 2,
+            }}
+          >
+            11 DAYS AGO
+          </div>
+        </div>
+      </div>
+      <div
+        style={{
+          marginTop: 20,
+          color: brand.colors.navy,
+          fontFamily: brand.fonts.body,
+          fontWeight: 600,
+          fontSize: 32,
+          textAlign: "center",
+          opacity: 0.85,
+        }}
+      >
+        Domain registered just 11 days ago.
+      </div>
+    </div>
+  );
+};
+
 const BodyBeatCard: React.FC<{
   text: string;
   brand: AuthentilensTopicalV1Props["brand"];
@@ -193,6 +308,7 @@ const BodyBeatCard: React.FC<{
         TELL #{index + 1}
       </div>
       {index === 0 ? <StolenPhotoEvidenceCard brand={brand} y={y} opacity={opacity} /> : null}
+      {index === 2 ? <DomainAgeEvidenceCard brand={brand} y={y} opacity={opacity} /> : null}
       <div
         style={{
           color: brand.colors.navy,
