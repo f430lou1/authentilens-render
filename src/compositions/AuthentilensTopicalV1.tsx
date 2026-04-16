@@ -74,6 +74,96 @@ const Hook: React.FC<{ text: string; brand: AuthentilensTopicalV1Props["brand"] 
   );
 };
 
+const StolenPhotoEvidenceCard: React.FC<{
+  brand: AuthentilensTopicalV1Props["brand"];
+  y: number;
+  opacity: number;
+}> = ({ brand, y, opacity }) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginBottom: 40,
+        transform: `translateY(${y}px)`,
+        opacity,
+      }}
+    >
+      <div
+        style={{
+          position: "relative",
+          width: 280,
+          height: 280,
+          borderRadius: "50%",
+          overflow: "hidden",
+          background: `linear-gradient(135deg, ${brand.colors.teal} 0%, ${brand.colors.navy} 100%)`,
+          boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
+          border: `6px solid ${brand.colors.navy}`,
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "22%",
+            width: 120,
+            height: 120,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.92)",
+            transform: "translateX(-50%)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "62%",
+            width: 220,
+            height: 220,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.92)",
+            transform: "translateX(-50%)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: "50%",
+            transform: "translateY(-50%) rotate(-12deg)",
+            backgroundColor: brand.colors.red,
+            color: "#fff",
+            fontFamily: brand.fonts.display,
+            fontWeight: 800,
+            fontSize: 40,
+            letterSpacing: 4,
+            textAlign: "center",
+            padding: "12px 0",
+            boxShadow: "0 6px 18px rgba(239,68,68,0.45)",
+          }}
+        >
+          STOCK MATCH
+        </div>
+      </div>
+      <div
+        style={{
+          marginTop: 20,
+          color: brand.colors.navy,
+          fontFamily: brand.fonts.body,
+          fontWeight: 600,
+          fontSize: 32,
+          textAlign: "center",
+          opacity: 0.85,
+        }}
+      >
+        Reverse-image match: stock photo site.
+      </div>
+    </div>
+  );
+};
+
 const BodyBeatCard: React.FC<{
   text: string;
   brand: AuthentilensTopicalV1Props["brand"];
@@ -102,6 +192,7 @@ const BodyBeatCard: React.FC<{
       >
         TELL #{index + 1}
       </div>
+      {index === 0 ? <StolenPhotoEvidenceCard brand={brand} y={y} opacity={opacity} /> : null}
       <div
         style={{
           color: brand.colors.navy,
