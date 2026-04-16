@@ -43,6 +43,40 @@ const INNER_TOP = PHONE_TOP + 14; // 224 — after shell padding
 const STATUS_BAR_HEIGHT = 70;
 const HEADER_HEIGHT = 130;
 
+// Safe margin for EvidenceCallout boxes so their text never overflows the
+// 1080-wide render frame. Prior box.x placements (PHONE_LEFT+PHONE_WIDTH-60
+// = 860 with width 440 → right edge 1300) blew past the right edge of the
+// frame and cut the callout copy off in the 8s preview render. Clamping
+// both x and width against a shared safe margin keeps the callout
+// fully on-frame without moving it relative to its anchor when it
+// already fits. Keep this module-local — scope-contained fix.
+const CALLOUT_SAFE_MARGIN = 40;
+const CALLOUT_MIN_WIDTH = 320;
+
+const clampCalloutBoxToSafeArea = (box: {
+  x: number;
+  y: number;
+  width: number;
+}): { x: number; y: number; width: number } => {
+  const minLeft = CALLOUT_SAFE_MARGIN;
+  const maxRight = FRAME_WIDTH - CALLOUT_SAFE_MARGIN;
+  let { x, width } = box;
+  if (x + width > maxRight) {
+    const overflow = x + width - maxRight;
+    const slide = Math.min(overflow, Math.max(0, x - minLeft));
+    x -= slide;
+    if (x + width > maxRight) {
+      width = Math.max(CALLOUT_MIN_WIDTH, maxRight - x);
+    }
+  }
+  if (x < minLeft) {
+    const shift = minLeft - x;
+    x = minLeft;
+    width = Math.max(CALLOUT_MIN_WIDTH, width - shift);
+  }
+  return { x, y: box.y, width };
+};
+
 const Scene1ColdOpen: React.FC<{
   phone: NonNullable<AuthentilensTopicalV1Props["phoneMockup"]>;
 }> = ({ phone }) => (
@@ -247,11 +281,11 @@ const Scene2Beat1: React.FC<{
   const rx = 82;
   const ry = 82;
 
-  const box = {
+  const box = clampCalloutBoxToSafeArea({
     x: PHONE_LEFT + PHONE_WIDTH - 60,
     y: avatarCy - 70,
     width: 440,
-  };
+  });
   const anchor = { x: avatarCx + rx + 6, y: avatarCy };
 
   return (
@@ -318,11 +352,11 @@ const Scene3Beat2: React.FC<{
   // Callout placement: nestled between the two highlighted regions on
   // the right so the connector bracket reads cleanly.
   const midCy = (clockSpot.cy + timestampSpot.cy) / 2;
-  const box = {
+  const box = clampCalloutBoxToSafeArea({
     x: PHONE_LEFT + PHONE_WIDTH - 40,
     y: midCy - 80,
     width: 440,
-  };
+  });
   const anchor = {
     x: timestampSpot.cx + timestampSpot.rx + 6,
     y: timestampSpot.cy,
