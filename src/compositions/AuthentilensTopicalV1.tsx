@@ -77,211 +77,7 @@ const Hook: React.FC<{ text: string; brand: AuthentilensTopicalV1Props["brand"] 
   );
 };
 
-const StolenPhotoEvidenceCard: React.FC<{
-  brand: AuthentilensTopicalV1Props["brand"];
-  y: number;
-  opacity: number;
-}> = ({ brand, y, opacity }) => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        marginBottom: 40,
-        transform: `translateY(${y}px)`,
-        opacity,
-      }}
-    >
-      <div
-        style={{
-          position: "relative",
-          width: 280,
-          height: 280,
-          borderRadius: "50%",
-          overflow: "hidden",
-          background: `linear-gradient(135deg, ${brand.colors.teal} 0%, ${brand.colors.navy} 100%)`,
-          boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
-          border: `6px solid ${brand.colors.navy}`,
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "22%",
-            width: 120,
-            height: 120,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.92)",
-            transform: "translateX(-50%)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "62%",
-            width: 220,
-            height: 220,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.92)",
-            transform: "translateX(-50%)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            top: "50%",
-            transform: "translateY(-50%) rotate(-12deg)",
-            backgroundColor: brand.colors.red,
-            color: "#fff",
-            fontFamily: brand.fonts.display,
-            fontWeight: 800,
-            fontSize: 40,
-            letterSpacing: 4,
-            textAlign: "center",
-            padding: "12px 0",
-            boxShadow: "0 6px 18px rgba(239,68,68,0.45)",
-          }}
-        >
-          STOCK MATCH
-        </div>
-      </div>
-      <div
-        style={{
-          marginTop: 20,
-          color: brand.colors.navy,
-          fontFamily: brand.fonts.body,
-          fontWeight: 600,
-          fontSize: 32,
-          textAlign: "center",
-          opacity: 0.85,
-        }}
-      >
-        Reverse-image match: stock photo site.
-      </div>
-    </div>
-  );
-};
-
-const DomainAgeEvidenceCard: React.FC<{
-  brand: AuthentilensTopicalV1Props["brand"];
-  y: number;
-  opacity: number;
-}> = ({ brand, y, opacity }) => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        marginBottom: 40,
-        transform: `translateY(${y}px)`,
-        opacity,
-      }}
-    >
-      <div
-        style={{
-          position: "relative",
-          width: 640,
-          padding: "28px 36px",
-          borderRadius: 24,
-          background: `linear-gradient(135deg, ${brand.colors.navy} 0%, #162d50 100%)`,
-          boxShadow: "0 12px 32px rgba(0,0,0,0.22)",
-          border: `3px solid ${brand.colors.teal}`,
-          display: "flex",
-          flexDirection: "column",
-          gap: 16,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
-          <div
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: "50%",
-              backgroundColor: brand.colors.red,
-              flexShrink: 0,
-            }}
-          />
-          <div
-            style={{
-              fontFamily: brand.fonts.body,
-              fontSize: 28,
-              color: "rgba(255,255,255,0.5)",
-              letterSpacing: 1,
-            }}
-          >
-            WHOIS LOOKUP
-          </div>
-        </div>
-        <div
-          style={{
-            fontFamily: brand.fonts.body,
-            fontSize: 32,
-            color: "rgba(255,255,255,0.7)",
-            borderBottom: "1px solid rgba(255,255,255,0.1)",
-            paddingBottom: 12,
-          }}
-        >
-          scam-link-example.xyz
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              fontFamily: brand.fonts.body,
-              fontSize: 26,
-              color: "rgba(255,255,255,0.5)",
-            }}
-          >
-            Registered
-          </div>
-          <div
-            style={{
-              fontFamily: brand.fonts.display,
-              fontSize: 44,
-              fontWeight: 800,
-              color: brand.colors.red,
-              letterSpacing: 2,
-            }}
-          >
-            11 DAYS AGO
-          </div>
-        </div>
-      </div>
-      <div
-        style={{
-          marginTop: 20,
-          color: brand.colors.navy,
-          fontFamily: brand.fonts.body,
-          fontWeight: 600,
-          fontSize: 32,
-          textAlign: "center",
-          opacity: 0.85,
-        }}
-      >
-        Domain registered just 11 days ago.
-      </div>
-    </div>
-  );
-};
-
-/* -- Beat-1 phone + spotlight + callout (ported from ColdOpenPlusBeat1Preview) -- */
+/* -- Beat phone + spotlight + callout spine -- */
 const PHONE_WIDTH = 760;
 const PHONE_HEIGHT = 1500;
 const FRAME_WIDTH = 1080;
@@ -345,7 +141,7 @@ const EvidenceCallout: React.FC<{
           left: box.x,
           top: box.y,
           width: box.width,
-          padding: "20px 26px",
+          padding: "18px 24px",
           background: brand.colors.navy,
           color: brand.colors.bg,
           borderRadius: 22,
@@ -358,8 +154,8 @@ const EvidenceCallout: React.FC<{
         <div style={{ color: brand.colors.teal, fontFamily: brand.fonts.display, fontWeight: 800, fontSize: 20, letterSpacing: 2, marginBottom: 6, textTransform: "uppercase" }}>
           Evidence {index} / {total}
         </div>
-        <div style={{ fontWeight: 700, fontSize: 30, lineHeight: 1.15 }}>{item.label}</div>
-        {item.detail ? <div style={{ marginTop: 8, fontSize: 22, opacity: 0.85 }}>{item.detail}</div> : null}
+        <div style={{ fontWeight: 700, fontSize: 28, lineHeight: 1.15 }}>{item.label}</div>
+        {item.detail ? <div style={{ marginTop: 6, fontSize: 20, opacity: 0.85, lineHeight: 1.3 }}>{item.detail}</div> : null}
       </div>
     </>
   );
@@ -401,23 +197,35 @@ const PhoneEvidenceScene: React.FC<{
 };
 
 // Per-beat spotlight + callout layouts.
-// Only beats with a PhoneMockup-anchored proof are listed here; beats not in
-// this map fall through to the legacy BodyBeatCard so behavior is unchanged
-// for Beat 3 and any future beats that are not yet wired.
+// All four production beats route through PhoneEvidenceScene with the shared
+// below-phone callout band. The legacy hardcoded StolenPhotoEvidenceCard and
+// DomainAgeEvidenceCard have been retired â their sample text drifted from
+// the fixture (e.g., the WHOIS card's domain did not match the DM link).
+// BodyBeatCard is now only a safety fallback when phoneMockup / evidence is
+// absent, and intentionally renders plain text only.
 const PHONE_LEFT = (FRAME_WIDTH - PHONE_WIDTH) / 2;
 const PHONE_TOP = (FRAME_HEIGHT - PHONE_HEIGHT) / 2;
-const BELOW_PHONE_BOX: CalloutBox = { x: 80, y: 1730, width: 920 };
+const BELOW_PHONE_BOX: CalloutBox = { x: 80, y: 1710, width: 920 };
 
 const EVIDENCE_LAYOUTS: Record<number, { spot: SpotAnchor; box: CalloutBox }> = {
   // Beat 1 (index 0): spotlight on the avatar â stolen-photo proof.
+  // Callout moved into the shared below-phone band so it no longer runs
+  // off-frame on the right (prior box extended past 1080 by ~220px).
   0: {
     spot: { cx: PHONE_LEFT + 14 + 28 + 36, cy: PHONE_TOP + 14 + 70 + 65, rx: 82, ry: 82 },
-    box:  { x: PHONE_LEFT + PHONE_WIDTH - 60, y: PHONE_TOP + 14 + 70 + 65 - 70, width: 440 },
+    box:  BELOW_PHONE_BOX,
   },
   // Beat 2 (index 1): spotlight on the first "them" message timestamp (3:11 AM)
   // â timestamp-anomaly proof.
   1: {
     spot: { cx: 240, cy: 582, rx: 100, ry: 32 },
+    box:  BELOW_PHONE_BOX,
+  },
+  // Beat 3 (index 2): spotlight on the "bit.ly/ez-wealth-now" link bubble
+  // â domain-age proof. Replaces the retired hardcoded WHOIS card whose
+  // sample domain did not match the fixture's actual DM link.
+  2: {
+    spot: { cx: 460, cy: 920, rx: 260, ry: 50 },
     box:  BELOW_PHONE_BOX,
   },
   // Beat 4 (index 3): spotlight on the long flagged "sign up through my link"
@@ -456,8 +264,6 @@ const BodyBeatCard: React.FC<{
       >
         TELL #{index + 1}
       </div>
-      {index === 0 ? <StolenPhotoEvidenceCard brand={brand} y={y} opacity={opacity} /> : null}
-      {index === 2 ? <DomainAgeEvidenceCard brand={brand} y={y} opacity={opacity} /> : null}
       <div
         style={{
           color: brand.colors.navy,
@@ -574,7 +380,6 @@ const Background: React.FC<{ clip: AuthentilensTopicalV1Props["backgroundClip"] 
   clip,
 }) => {
   // Null-safe Background: backgroundClip may be null/undefined per fixture.
-  // Guard before any property access on clip (was bug: clip.src crashed when clip was null).
   if (!clip || clip.treatment === "none") return null;
   const src = safeStaticFile(clip.src);
   if (!src) return null;
@@ -588,6 +393,7 @@ const Background: React.FC<{ clip: AuthentilensTopicalV1Props["backgroundClip"] 
 export const AuthentilensTopicalV1: React.FC<AuthentilensTopicalV1Props> = (props) => {
   const { hook, body, verdictOverlay, cta, brand, voiceover, backgroundClip, complianceFooter, phoneMockup, evidence } =
     props;
+  const { durationInFrames: totalFrames } = useVideoConfig();
 
   const hookFrames = hook.durationFrames;
   const bodySegments = buildBodySegments(hookFrames, body);
@@ -596,6 +402,22 @@ export const AuthentilensTopicalV1: React.FC<AuthentilensTopicalV1Props> = (prop
       ? bodySegments[bodySegments.length - 1].from + bodySegments[bodySegments.length - 1].durationInFrames
       : hookFrames;
   const ctaStart = lastBeatEnd;
+
+  // Verdict must land BEFORE the CTA starts so the "LIKELY SCAM" pill does
+  // not stack on the endcard. Respect the fixture's appearAtFrame, but clamp
+  // it earlier if the fixture asks the verdict to appear at or after ctaStart,
+  // so the viewer always sees at least VERDICT_MIN_FRAMES of clean verdict
+  // pre-CTA.
+  const VERDICT_MIN_FRAMES = 60;
+  const verdictAppear = Math.min(
+    verdictOverlay.appearAtFrame,
+    Math.max(0, ctaStart - VERDICT_MIN_FRAMES)
+  );
+  const verdictDur = Math.max(VERDICT_MIN_FRAMES, ctaStart - verdictAppear);
+
+  // CTA fills from ctaStart through the end of the composition so the viewer
+  // does not see dead background color after the CTA's nominal cta.frames.
+  const ctaDur = Math.max(cta.frames, totalFrames - ctaStart);
 
   const voSrc = safeStaticFile(voiceover.src);
   const musicSrc = safeStaticFile(brand.musicBed);
@@ -626,11 +448,11 @@ export const AuthentilensTopicalV1: React.FC<AuthentilensTopicalV1Props> = (prop
         </Sequence>
       ))}
 
-      <Sequence from={verdictOverlay.appearAtFrame} durationInFrames={Math.max(1, ctaStart + cta.frames - verdictOverlay.appearAtFrame)}>
+      <Sequence from={verdictAppear} durationInFrames={verdictDur}>
         <VerdictOverlay overlay={verdictOverlay} brand={brand} />
       </Sequence>
 
-      <Sequence from={ctaStart} durationInFrames={cta.frames}>
+      <Sequence from={ctaStart} durationInFrames={ctaDur}>
         <CtaEndcard cta={cta} brand={brand} complianceFooter={complianceFooter} />
       </Sequence>
 
